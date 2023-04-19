@@ -1,0 +1,27 @@
+#include "SafeBuffer.h"
+#include <iostream>
+
+SafeBuffer::SafeBuffer(){
+    mutex1.reset(new Semaphore(1));
+    spaces.reset(new Semaphore(0));
+    items.reset(new Semaphore(0));
+}
+
+int SafeBuffer::put(Event e){
+  // spaces->Wait();
+  mutex1->Wait();
+  buffer.push_back(e);
+  int numItems= buffer.size();
+  mutex1->Signal();
+  items->Signal();
+  return numItems ;
+}
+Event SafeBuffer::get(){
+  items->Wait();
+  mutex1->Wait();
+  Event e = buffer.back();
+  buffer.pop_back();
+  mutex1->Signal();
+  // spaces->Signal();
+  return e ;
+}

@@ -1,0 +1,64 @@
+// Barrier.cpp --- 
+// 
+// Filename: Barrier.cpp
+// Description: 
+// Author: Joseph
+// Maintainer: 
+// Created: Tue Jan  8 12:14:02 2019 (+0000)
+// Version: 
+// Package-Requires: ()
+// Last-Updated: Tue Jan  8 12:15:21 2019 (+0000)
+//           By: Joseph
+//     Update #: 2
+// URL: 
+// Doc URL: 
+// Keywords: 
+// Compatibility: 
+// 
+// 
+
+
+// Code:
+#include "Semaphore.h"
+#include "Barrier.h"
+#include <iostream>
+
+
+Barrier::Barrier(int numThreads){
+    this->numThreads = numThreads;
+    count = 0;
+    std::shared_ptr<Semaphore> counterLock( new Semaphore(1));
+    std::shared_ptr<Semaphore> taskOneLock( new Semaphore(0));
+    std::shared_ptr<Semaphore> taskTwoLock( new Semaphore(1));
+}
+
+Barrier::~Barrier(){
+    std::cout << "Garbage Collected" << std::endl;
+}
+
+void Barrier::taskOne(){
+  counterLock->Wait();
+  count++;
+  if(count == numThreads){
+     taskTwoLock->Wait();
+     taskOneLock->Signal();
+  }
+  counterLock->Signal();
+}
+void Barrier::taskTwo(){
+    counterLock->Wait();
+    count--;
+    if (count == 0)
+    {
+        taskOneLock->Wait();
+        taskTwoLock->Signal();
+    }
+    counterLock->Signal();
+}
+void Barrier::wait()
+{
+     taskOne();
+     taskTwo();
+}
+// 
+// Barrier.cpp ends here

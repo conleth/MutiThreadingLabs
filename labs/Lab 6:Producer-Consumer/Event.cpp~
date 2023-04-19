@@ -1,0 +1,16 @@
+#include "Event.h"
+#include <stdlib.h>
+#include <iostream>
+
+//static int count [26]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+Event::Event(int i){
+  randomChar = 'a'+rand()%26 ; 
+}
+
+Event Event:: createEvent(int i){
+ return *new Event(i);
+}
+
+char Event::consume(){
+  return randomChar ;
+}

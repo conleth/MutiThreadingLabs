@@ -1,0 +1,23 @@
+#Conleth Kennedy 13/11/2019
+#Make file for semaphore lab
+#Used to contain commands to compile projects
+#Equivalent(?) to a project file in VStudio -- only better!
+#See http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/ for info.
+
+#Declaring Compiler and C++ syntax to use
+CC=g++
+CFLAGS= -std=c++17 -pthread
+
+#This rule says each 0.file depends on a .cpp file of the same name 
+%.0: %.cpp
+	$(CC) -o $@ $< $(CFLAGS) $(DEBUGFLAGS)
+#Include link the .o files 
+ALL: main.o Semaphore.o
+	$(CC) -o mutex main.o Semaphore.o $(CFLAGS) $(DEBUGFLAGS)
+
+DEBUG: DEBUGFLAGS = .DEBUG
+DEBUG: ALL
+
+
+CLEAN:
+	rm *.o
